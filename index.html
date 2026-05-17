@@ -56,7 +56,7 @@ body{
 .tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted)}
 .tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent)}
 .japan-impact{background:rgba(139,0,0,.04);border-left:3px solid var(--accent);padding:10px 14px;margin-top:12px;font-size:15px}
-.shift-box{background:rgba(99,102,241,.06);border-left:3px solid #6366f1;padding:8px 14px;margin-bottom:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;color:#4338ca}
+.shift-box{background:rgba(139,0,0,.05);border-left:3px solid var(--accent);padding:8px 14px;margin-bottom:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;color:var(--accent)}
 .japan-impact::before{content:'🇯🇵 日本への影響';display:block;font-weight:700;font-size:13px;color:var(--accent);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif}
 .why-read{margin-top:10px;font-size:14px;color:var(--muted);font-style:italic;padding-left:12px;border-left:2px solid var(--rule)}
 .why-read::before{content:'💡 '}
@@ -244,7 +244,7 @@ function renderArticle(article, isLead) {
 
   // Signal解説
   if (article.signal) {
-    html += `<div class="japan-impact" style="border-left-color:#6366f1;background:rgba(99,102,241,.04)"><div style="font-weight:700;font-size:13px;color:#6366f1;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">💡 Signal</div>${escapeHtml(article.signal)}</div>`;
+    html += `<div class="japan-impact" style="border-left-color:#d69e2e;background:rgba(214,158,46,.04)"><div style="font-weight:700;font-size:13px;color:#d69e2e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">💡 Signal</div>${escapeHtml(article.signal)}</div>`;
   }
 
   // 日本への影響
