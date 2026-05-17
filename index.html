@@ -38,7 +38,7 @@ body{
 .ticker-change{font-size:12px;margin-top:2px}
 .ticker-change.up{color:#22c55e}
 .ticker-change.down{color:#ef4444}
-.masthead-logo{height:120px;width:auto;display:block;margin:0 auto;filter:sepia(40%) saturate(80%)}
+.masthead-logo{height:120px;width:auto;display:block;margin:0 auto}
 .filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#ffffff;font-family:'Noto Sans JP',sans-serif}
 .filter-btn{background:transparent;border:1px solid var(--rule);padding:6px 14px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--ink);height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;filter:grayscale(1)}
 .filter-btn:hover{background:var(--ink);color:var(--paper);filter:none}
@@ -94,6 +94,10 @@ body{
 .modal-inner .gap-box{font-size:17px;margin-bottom:20px}
 .modal-inner .source-link{font-size:15px}
 .footer{text-align:center;padding:24px 20px;border-top:3px double var(--ink);font-size:14px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
+.column-box{max-width:1200px;margin:0 auto;padding:0 20px 24px}
+.column-inner{border:1px solid var(--rule);padding:20px;margin-top:16px;display:flex;gap:16px;align-items:flex-start}
+.column-header{font-size:14px;font-weight:700;color:var(--ink);font-family:'Noto Sans JP',sans-serif;margin-bottom:8px}
+.column-text{font-size:16px;line-height:2;color:var(--ink)}
 .loading{text-align:center;padding:60px 20px;font-size:18px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
 .loading-spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-right:12px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -186,6 +190,16 @@ body{
 <main class="newspaper" id="newspaper">
   <div class="loading"><span class="loading-spinner"></span>記事を読み込んでいます...</div>
 </main>
+
+<div class="column-box" id="columnBox">
+  <div class="column-inner">
+    <img src="外報電抄logo002.svg" alt="" style="height:80px;width:80px;flex-shrink:0;filter:sepia(40%) saturate(80%)">
+    <div>
+      <div class="column-header">✍️ 編集部コラム ─ <span id="columnAuthor">黒田</span></div>
+      <div class="column-text" id="columnText">予測市場をAIで監視するという話を読んで、正直ぞっとした。人間が作った市場を、人間が監視できなくなったからAIに任せる。これは「進歩」なのか。エンジンの回転数は人間の耳でわかる。だが金融市場の異常は、もはや人間の感覚では捉えられない。我々は自分たちが作ったものに、自分たちが追いつけなくなっている。</div>
+    </div>
+  </div>
+</div>
 
 <footer class="footer">
   外報電抄 ─ 海外テック業界の変化を観測、要約して届ける<br>
@@ -294,6 +308,13 @@ function renderNewspaper(data) {
 
   // 日付表示
   document.getElementById('edition-date').textContent = formatEditionDate(data.date, data.edition);
+
+  // コラム表示
+  if (data.column && data.column.text) {
+    document.getElementById('columnAuthor').textContent = data.column.author;
+    document.getElementById('columnText').textContent = data.column.text;
+    document.getElementById('columnBox').style.display = '';
+  }
 
   let html = '';
 
