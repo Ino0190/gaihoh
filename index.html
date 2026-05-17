@@ -36,7 +36,7 @@ body{
 .ticker-change.up{color:#22c55e}
 .ticker-change.down{color:#ef4444}
 .masthead-logo{height:120px;width:auto;display:block;margin:0 auto;filter:sepia(40%) saturate(80%)}
-.masthead-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;max-width:1200px;margin:-2px auto 0;padding:0 20px;border-bottom:none;line-height:2.4}
+.masthead-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;max-width:1200px;margin:0 auto;padding:0 20px 4px;border-bottom:none;line-height:2.4}
 #edition-date{font-size:18px;font-weight:700;color:var(--ink)}
 .filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#ffffff;font-family:'Noto Sans JP',sans-serif}
 .filter-btn{background:transparent;border:1px solid var(--rule);padding:6px 14px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--ink);height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;filter:grayscale(1)}
@@ -134,6 +134,10 @@ body{
 <body>
 
 <header class="masthead">
+  <div class="masthead-bottom">
+    <span>海外テック業界の変化を厳選５記事で読む</span>
+    <span id="edition-date">読み込み中...</span>
+  </div>
   <div class="masthead-hero">
     <div class="ticker-cards ticker-left">
       <div class="ticker-card">
@@ -160,10 +164,6 @@ body{
         <div class="ticker-change" id="ticker-wti-chg"></div>
       </div>
     </div>
-  </div>
-  <div class="masthead-bottom">
-    <span>海外テック業界の変化を厳選５記事で読む</span>
-    <span id="edition-date">読み込み中...</span>
   </div>
 </header>
 
