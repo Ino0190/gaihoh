@@ -24,13 +24,12 @@ body{
   padding:0;
   overflow-x:hidden;
 }
-.masthead{text-align:center;padding:24px 20px 0;border-bottom:none}
+.masthead{text-align:center;padding:12px 20px 0;border-bottom:none}
 .masthead h1{margin-bottom:0;padding:0;line-height:1}
-.masthead-hero{display:flex;align-items:flex-start;justify-content:center;gap:16px;max-width:1200px;margin:0 auto}
-.masthead-col{display:flex;flex-direction:column;align-items:flex-start;gap:8px;flex:1}
-.masthead-right{align-items:flex-end}
-.masthead-subtitle{font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;white-space:nowrap}
-.masthead-date{font-size:18px;font-weight:700;color:var(--ink);font-family:'Noto Serif JP','Yu Mincho','游明朝',serif;white-space:nowrap}
+.masthead-top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto 0;padding:0 20px}
+.masthead-subtitle{font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
+.masthead-date{font-size:18px;font-weight:700;color:var(--ink);font-family:'Noto Serif JP','Yu Mincho','游明朝',serif}
+.masthead-hero{display:flex;align-items:center;justify-content:center;gap:16px}
 .ticker-cards{display:flex;gap:20px;align-items:center}
 .ticker-card{width:110px;height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Noto Sans JP',sans-serif;background:transparent;position:relative;top:5px}
 .ticker-cards .ticker-card+.ticker-card::before{content:'・\A・\A・';white-space:pre;position:absolute;left:-14px;top:50%;transform:translateY(-50%);font-size:10px;color:var(--rule);line-height:1.2}
@@ -60,6 +59,7 @@ body{
 .tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent);filter:grayscale(1)}
 .japan-impact{background:rgba(139,0,0,.04);border-left:3px solid var(--accent);padding:10px 14px;margin-top:12px;font-size:15px}
 .shift-box{background:rgba(139,0,0,.05);border-left:3px solid var(--accent);padding:8px 14px;margin-bottom:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;color:var(--accent)}
+.signal-box{background:rgba(146,64,14,.05);border-left:3px solid #92400e;padding:10px 14px;margin-top:12px;font-size:15px}
 .japan-impact::before{content:'🇯🇵 日本への影響';display:block;font-weight:700;font-size:13px;color:var(--accent);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif}
 .why-read{margin-top:10px;font-size:14px;color:var(--muted);font-style:italic;padding-left:12px;border-left:2px solid var(--rule)}
 .why-read::before{content:'💡 '}
@@ -135,36 +135,34 @@ body{
 <body>
 
 <header class="masthead">
+  <div class="masthead-top">
+    <span class="masthead-subtitle">海外テック業界の変化を毎朝厳選５記事で読む</span>
+    <span class="masthead-date" id="edition-date">読み込み中...</span>
+  </div>
   <div class="masthead-hero">
-    <div class="masthead-col masthead-left">
-      <div class="masthead-subtitle">海外テック業界の変化を厳選５記事で読む</div>
-      <div class="ticker-cards">
-        <div class="ticker-card">
-          <div class="ticker-label">USD/JPY</div>
-          <div class="ticker-value" id="ticker-usdjpy">---</div>
-          <div class="ticker-change" id="ticker-usdjpy-chg"></div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-label">日経平均</div>
-          <div class="ticker-value" id="ticker-nikkei">---</div>
-          <div class="ticker-change" id="ticker-nikkei-chg"></div>
-        </div>
+    <div class="ticker-cards">
+      <div class="ticker-card">
+        <div class="ticker-label">USD/JPY</div>
+        <div class="ticker-value" id="ticker-usdjpy">---</div>
+        <div class="ticker-change" id="ticker-usdjpy-chg"></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-label">日経平均</div>
+        <div class="ticker-value" id="ticker-nikkei">---</div>
+        <div class="ticker-change" id="ticker-nikkei-chg"></div>
       </div>
     </div>
     <h1><img src="外報電抄logo001.svg" alt="外報電抄" class="masthead-logo"></h1>
-    <div class="masthead-col masthead-right">
-      <div class="masthead-date" id="edition-date">読み込み中...</div>
-      <div class="ticker-cards">
-        <div class="ticker-card">
-          <div class="ticker-label">NYダウ</div>
-          <div class="ticker-value" id="ticker-dow">---</div>
-          <div class="ticker-change" id="ticker-dow-chg"></div>
-        </div>
-        <div class="ticker-card">
-          <div class="ticker-label">原油WTI</div>
-          <div class="ticker-value" id="ticker-wti">---</div>
-          <div class="ticker-change" id="ticker-wti-chg"></div>
-        </div>
+    <div class="ticker-cards">
+      <div class="ticker-card">
+        <div class="ticker-label">NYダウ</div>
+        <div class="ticker-value" id="ticker-dow">---</div>
+        <div class="ticker-change" id="ticker-dow-chg"></div>
+      </div>
+      <div class="ticker-card">
+        <div class="ticker-label">原油WTI</div>
+        <div class="ticker-value" id="ticker-wti">---</div>
+        <div class="ticker-change" id="ticker-wti-chg"></div>
       </div>
     </div>
   </div>
@@ -216,7 +214,7 @@ function formatEditionDate(isoDate, edition) {
   const m = d.getMonth() + 1;
   const day = d.getDate();
   const dow = days[d.getDay()];
-  return `${y}年${m}月${day}日（${dow}）${edition || ''}`;
+  return `${y}年${m}月${day}日（${dow}）`;
 }
 
 // 記事HTMLを生成
@@ -249,7 +247,7 @@ function renderArticle(article, isLead) {
 
   // Signal（業界の変化方向）
   if (article.signal) {
-    html += `<div class="japan-impact" style="border-left-color:#d69e2e;background:rgba(214,158,46,.04)"><div style="font-weight:700;font-size:13px;color:#d69e2e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">📡 Signal</div>${escapeHtml(article.signal)}</div>`;
+    html += `<div class="signal-box"><div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">📡 Signal</div>${escapeHtml(article.signal)}</div>`;
   }
 
   // 日本への影響
@@ -257,10 +255,13 @@ function renderArticle(article, isLead) {
     html += `<div class="japan-impact">${escapeHtml(article.japan_impact)}</div>`;
   }
 
-  // 原文リンク
+  // 原文リンク + 企業URL
   if (article.source_url) {
     const name = article.source_name || new URL(article.source_url).hostname.replace('www.','');
     html += `<a href="${escapeHtml(article.source_url)}" class="source-link" target="_blank" rel="noopener">原文: ${escapeHtml(name)}</a>`;
+  }
+  if (article.company_url) {
+    html += ` <a href="${escapeHtml(article.company_url)}" class="source-link" target="_blank" rel="noopener" style="margin-left:12px">🔗 ${new URL(article.company_url).hostname.replace('www.','')}</a>`;
   }
 
   return html;
