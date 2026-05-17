@@ -47,13 +47,13 @@ body{
 .filter-label{font-size:12px;color:var(--muted);margin-right:4px;white-space:nowrap}
 .newspaper{max-width:1200px;margin:0 auto;padding:24px 20px}
 .lead-article{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:24px}
-.lead-article .headline{font-size:32px;font-weight:900;line-height:1.4;margin-bottom:12px;white-space:pre-line}
+.lead-article .headline{font-size:42px;font-weight:900;line-height:1.4;margin-bottom:12px;white-space:pre-line}
 .lead-article .meta{display:flex;gap:12px;margin-bottom:12px;font-family:'Noto Sans JP',sans-serif}
 .lead-article .summary{font-size:18px;line-height:2;columns:2;column-gap:32px;column-rule:1px solid var(--rule)}
 .articles-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .article{padding:20px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .articles-grid .article:nth-child(2n){border-right:none}
-.article .headline{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px;white-space:pre-line}
+.article .headline{font-size:24px;font-weight:700;line-height:1.5;margin-bottom:8px;white-space:pre-line}
 .article .summary{font-size:16px;line-height:1.9;margin-bottom:12px}
 .tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted);filter:grayscale(1)}
 .tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent);filter:grayscale(1)}
@@ -247,7 +247,11 @@ function renderArticle(article, isLead) {
 
   // Signal（業界の変化方向）
   if (article.signal) {
-    html += `<div class="signal-box"><div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">📡 Signal</div>${escapeHtml(article.signal)}</div>`;
+    let tagsHtml = '';
+    if (article.related_tags && article.related_tags.length > 0) {
+      tagsHtml = '<div style="margin-top:8px">' + article.related_tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('') + '</div>';
+    }
+    html += `<div class="signal-box"><div style="font-weight:700;font-size:13px;color:#92400e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">📡 Signal</div>${escapeHtml(article.signal)}${tagsHtml}</div>`;
   }
 
   // 日本への影響
@@ -255,10 +259,16 @@ function renderArticle(article, isLead) {
     html += `<div class="japan-impact">${escapeHtml(article.japan_impact)}</div>`;
   }
 
-  // 原文リンク + 企業URL
+  // 編集論評（一面記事のみ）
+  if (article.editorial) {
+    html += `<div class="signal-box" style="border-left-color:var(--ink);background:rgba(26,26,26,.03)"><div style="font-weight:700;font-size:13px;color:var(--ink);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">✍️ 編集論評</div>${escapeHtml(article.editorial)}</div>`;
+  }
+
+  // シェア + 原文リンク + 企業URL
+  html += `<button class="share-btn" onclick="shareArticle(this)" style="background:none;border:1px solid var(--rule);padding:2px 10px;font-size:12px;cursor:pointer;color:var(--muted);font-family:'Noto Sans JP',sans-serif">🔗 共有</button>`;
   if (article.source_url) {
     const name = article.source_name || new URL(article.source_url).hostname.replace('www.','');
-    html += `<a href="${escapeHtml(article.source_url)}" class="source-link" target="_blank" rel="noopener">原文: ${escapeHtml(name)}</a>`;
+    html += ` <a href="${escapeHtml(article.source_url)}" class="source-link" target="_blank" rel="noopener" style="margin-left:12px">原文: ${escapeHtml(name)}</a>`;
   }
   if (article.company_url) {
     html += ` <a href="${escapeHtml(article.company_url)}" class="source-link" target="_blank" rel="noopener" style="margin-left:12px">🔗 ${new URL(article.company_url).hostname.replace('www.','')}</a>`;
@@ -289,7 +299,7 @@ function renderNewspaper(data) {
 
   // トップ記事（1本目）
   const lead = articlesData[0];
-  html += `<article class="lead-article" data-tag="${lead.tag}" data-idx="0">`;
+  html += `<article class="lead-article" id="article-0" data-tag="${lead.tag}" data-idx="0">`;
   html += renderArticle(lead, true);
   html += `</article>`;
 
@@ -298,7 +308,7 @@ function renderNewspaper(data) {
     html += '<div class="articles-grid">';
     for (let i = 1; i < articlesData.length; i++) {
       const a = articlesData[i];
-      html += `<article class="article" data-tag="${a.tag}" data-idx="${i}">`;
+      html += `<article class="article" id="article-${i}" data-tag="${a.tag}" data-idx="${i}">`;
       html += renderArticle(a, false);
       html += `</article>`;
     }
@@ -382,6 +392,20 @@ function setupArticleClicks() {
   // モーダル廃止: 記事は全文表示のまま。テキスト選択可能。
 }
 
+function shareArticle(btn) {
+  const article = btn.closest('[id^="article-"]');
+  if (!article) return;
+  const url = location.origin + location.pathname + '#' + article.id;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url).then(() => {
+      btn.textContent = '✓ コピー済';
+      setTimeout(() => { btn.textContent = '🔗 共有'; }, 2000);
+    });
+  } else {
+    prompt('この記事のURL:', url);
+  }
+}
+
 // API呼び出し
 async function loadArticles() {
   try {
@@ -424,6 +448,16 @@ async function loadTickers() {
 
 loadArticles();
 loadTickers();
+
+// ハッシュがあればその記事までスクロール
+window.addEventListener('load', () => {
+  if (location.hash) {
+    setTimeout(() => {
+      const el = document.querySelector(location.hash);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 500);
+  }
+});
 </script>
 <!-- Cloudflare Web Analytics -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "4b75c0a5efc842259fac41787d7a0142"}'></script>
