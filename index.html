@@ -36,8 +36,8 @@ body{
 .ticker-change.up{color:#22c55e}
 .ticker-change.down{color:#ef4444}
 .masthead-logo{height:120px;width:auto;display:block;margin:0 auto;filter:sepia(40%) saturate(80%)}
-.masthead-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;padding:0 20px 0;margin-top:-2px;border-bottom:none;line-height:2.4}
-.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);margin-left:-9999px;margin-right:-9999px;padding-left:9999px;padding-right:9999px;background:#ffffff;font-family:'Noto Sans JP',sans-serif}
+.masthead-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;max-width:1200px;margin:-2px auto 0;padding:0 20px;border-bottom:none;line-height:2.4}
+.filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#ffffff;font-family:'Noto Sans JP',sans-serif}
 .filter-btn{background:transparent;border:1px solid var(--rule);padding:6px 14px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--ink);height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
 .filter-btn:hover{background:var(--ink);color:var(--paper)}
 .filter-btn.active{background:var(--ink);color:var(--paper);font-weight:700}
@@ -48,14 +48,15 @@ body{
 .lead-article .headline{font-size:32px;font-weight:900;line-height:1.4;margin-bottom:12px;white-space:pre-line}
 .lead-article .meta{display:flex;gap:12px;margin-bottom:12px;font-family:'Noto Sans JP',sans-serif}
 .lead-article .summary{font-size:18px;line-height:2;columns:2;column-gap:32px;column-rule:1px solid var(--rule)}
-.articles-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}
+.articles-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .article{padding:20px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.articles-grid .article:nth-child(3n){border-right:none}
+.articles-grid .article:nth-child(2n){border-right:none}
 .article .headline{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px;white-space:pre-line}
 .article .summary{font-size:16px;line-height:1.9;margin-bottom:12px}
 .tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted)}
 .tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent)}
 .japan-impact{background:rgba(139,0,0,.04);border-left:3px solid var(--accent);padding:10px 14px;margin-top:12px;font-size:15px}
+.shift-box{background:rgba(99,102,241,.06);border-left:3px solid #6366f1;padding:8px 14px;margin-bottom:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;color:#4338ca}
 .japan-impact::before{content:'🇯🇵 日本への影響';display:block;font-weight:700;font-size:13px;color:var(--accent);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif}
 .why-read{margin-top:10px;font-size:14px;color:var(--muted);font-style:italic;padding-left:12px;border-left:2px solid var(--rule)}
 .why-read::before{content:'💡 '}
@@ -95,9 +96,8 @@ body{
 @keyframes spin{to{transform:rotate(360deg)}}
 .error-msg{text-align:center;padding:40px 20px;color:var(--accent);font-family:'Noto Sans JP',sans-serif}
 @media(max-width:900px){
-  .articles-grid{grid-template-columns:1fr 1fr}
-  .articles-grid .article:nth-child(3n){border-right:1px solid var(--rule)}
-  .articles-grid .article:nth-child(2n){border-right:none}
+  .articles-grid{grid-template-columns:1fr}
+  .articles-grid .article{border-right:none}
   .lead-article .summary{columns:1}
   .outside-articles{grid-template-columns:1fr}
   .outside-article{border-right:none;border-bottom:1px solid var(--rule)}
@@ -161,32 +161,22 @@ body{
     </div>
   </div>
   <div class="masthead-bottom">
-    <span>日本のメディアが伝えない世界の動き</span>
+    <span>海外テック業界の変化を読む</span>
     <span id="edition-date">読み込み中...</span>
   </div>
 </header>
 
 <nav class="filters">
   <div class="filter-group">
-    <span class="filter-label">地域:</span>
+    <span class="filter-label">Signal:</span>
     <button class="filter-btn active" data-filter="all">すべて</button>
-    <button class="filter-btn" data-filter="us">🇺🇸 米国</button>
-    <button class="filter-btn" data-filter="eu">🇪🇺 欧州</button>
-    <button class="filter-btn" data-filter="ru">🇷🇺 ロシア</button>
-    <button class="filter-btn" data-filter="cn">🇨🇳 中国</button>
-    <button class="filter-btn" data-filter="in">🇮🇳 インド</button>
-    <button class="filter-btn" data-filter="me">🇸🇦 中東</button>
-  </div>
-  <div class="filter-group">
-    <span class="filter-label">分野:</span>
-    <button class="filter-btn active" data-category="all">すべて</button>
-    <button class="filter-btn" data-category="politics">政治</button>
-    <button class="filter-btn" data-category="diplomacy">外交</button>
-    <button class="filter-btn" data-category="economy">経済</button>
-    <button class="filter-btn" data-category="tech">テック</button>
-    <button class="filter-btn" data-category="trade">通商</button>
-    <button class="filter-btn" data-category="environment">環境</button>
-    <button class="filter-btn" data-category="sports">スポーツ</button>
+    <button class="filter-btn" data-filter="bigtech">🚨 Big Tech</button>
+    <button class="filter-btn" data-filter="ai">⚡ AI</button>
+    <button class="filter-btn" data-filter="semiconductor">🏭 半導体</button>
+    <button class="filter-btn" data-filter="china">🇨🇳 中国</button>
+    <button class="filter-btn" data-filter="funding">💰 Funding</button>
+    <button class="filter-btn" data-filter="oss">🧠 OSS</button>
+    <button class="filter-btn" data-filter="research">🔬 Research</button>
   </div>
 </nav>
 
@@ -195,8 +185,8 @@ body{
 </main>
 
 <footer class="footer">
-  外報電抄 ─ Powered by Claude API + RSS feeds from Reuters, AP, SCMP, Al Jazeera, The Guardian, and more.<br>
-  更新: 毎日 5:00 / 17:00 JST ─ 過去7日分アーカイブ
+  外報電抄 ─ 海外テック業界の変化を構造化して届ける<br>
+  更新: 毎朝 5:00 JST ─ Powered by Claude API + RSS
 </footer>
 
 <div class="article-modal" id="articleModal">
@@ -208,8 +198,7 @@ body{
 
 <script>
 const API_BASE = 'https://silent-lab-5ed5.number0190.workers.dev';
-const REGION_LABELS = { us:'🇺🇸 米国', eu:'🇪🇺 欧州', ru:'🇷🇺 ロシア', cn:'🇨🇳 中国', in:'🇮🇳 インド', me:'🇸🇦 中東', all:'🌐 国際' };
-const CATEGORY_LABELS = { politics:'政治', diplomacy:'外交', economy:'経済', tech:'テック', trade:'通商', environment:'環境', sports:'スポーツ' };
+const TAG_LABELS = { bigtech:'🚨 Big Tech', ai:'⚡ AI', semiconductor:'🏭 半導体', china:'🇨🇳 中国', funding:'💰 Funding', oss:'🧠 OSS', research:'🔬 Research' };
 
 let articlesData = [];
 let currentIndex = 0;
@@ -227,18 +216,21 @@ function formatEditionDate(isoDate, edition) {
 
 // 記事HTMLを生成
 function renderArticle(article, isLead) {
-  const regionTag = REGION_LABELS[article.region] || article.region;
-  const catTag = CATEGORY_LABELS[article.category] || article.category;
+  const tagLabel = TAG_LABELS[article.tag] || article.tag;
   const headline = (article.headline || '').replace(/\\n/g, '\n');
 
   let html = `<div class="meta">
-    <span class="tag region">${regionTag}</span>
-    <span class="tag">${catTag}</span>
+    <span class="tag region">${tagLabel}</span>
     ${article.published_at ? `<span>${article.published_at.slice(0,10)}</span>` : ''}
   </div>`;
 
   const hTag = isLead ? 'h2' : 'h3';
   html += `<${hTag} class="headline">${escapeHtml(headline)}</${hTag}>`;
+
+  // Signal（変化の方向性）
+  if (article.shift) {
+    html += `<div class="shift-box">📡 ${escapeHtml(article.shift)}</div>`;
+  }
 
   // 要約
   const summary = article.summary || '';
@@ -250,14 +242,14 @@ function renderArticle(article, isLead) {
     html += `<div class="summary">${escapeHtml(summary)}</div>`;
   }
 
+  // Signal解説
+  if (article.signal) {
+    html += `<div class="japan-impact" style="border-left-color:#6366f1;background:rgba(99,102,241,.04)"><div style="font-weight:700;font-size:13px;color:#6366f1;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">💡 Signal</div>${escapeHtml(article.signal)}</div>`;
+  }
+
   // 日本への影響
   if (article.japan_impact) {
     html += `<div class="japan-impact">${escapeHtml(article.japan_impact)}</div>`;
-  }
-
-  // なぜ読むべきか
-  if (article.why_read) {
-    html += `<div class="why-read">${escapeHtml(article.why_read)}</div>`;
   }
 
   // 原文リンク
@@ -290,7 +282,7 @@ function renderNewspaper(data) {
 
   // トップ記事（1本目）
   const lead = articlesData[0];
-  html += `<article class="lead-article" data-region="${lead.region}" data-category="${lead.category}" data-idx="0">`;
+  html += `<article class="lead-article" data-tag="${lead.tag}" data-idx="0">`;
   html += renderArticle(lead, true);
   html += `</article>`;
 
@@ -299,7 +291,7 @@ function renderNewspaper(data) {
     html += '<div class="articles-grid">';
     for (let i = 1; i < articlesData.length; i++) {
       const a = articlesData[i];
-      html += `<article class="article" data-region="${a.region}" data-category="${a.category}" data-idx="${i}">`;
+      html += `<article class="article" data-tag="${a.tag}" data-idx="${i}">`;
       html += renderArticle(a, false);
       html += `</article>`;
     }
@@ -314,12 +306,10 @@ function renderNewspaper(data) {
 
 // フィルター
 function applyFilters() {
-  const regionFilter = document.querySelector('[data-filter].active')?.dataset.filter || 'all';
-  const categoryFilter = document.querySelector('[data-category].active')?.dataset.category || 'all';
-  document.querySelectorAll('[data-region]').forEach(article => {
-    const matchRegion = regionFilter === 'all' || article.dataset.region === regionFilter;
-    const matchCategory = categoryFilter === 'all' || article.dataset.category === categoryFilter;
-    article.style.display = (matchRegion && matchCategory) ? '' : 'none';
+  const tagFilter = document.querySelector('[data-filter].active')?.dataset.filter || 'all';
+  document.querySelectorAll('[data-tag]').forEach(article => {
+    const match = tagFilter === 'all' || article.dataset.tag === tagFilter;
+    article.style.display = match ? '' : 'none';
   });
 }
 
@@ -341,14 +331,6 @@ function showModal(index) {
   currentIndex = index;
   const a = articlesData[currentIndex];
   let html = renderArticle(a, true);
-  // 追加: 因果連鎖
-  if (a.causal_chain) {
-    html += `<div class="japan-impact" style="border-left-color:#d69e2e;background:rgba(214,158,46,.04)"><div style="font-weight:700;font-size:13px;color:#d69e2e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">⛓️ 因果連鎖</div>${escapeHtml(a.causal_chain)}</div>`;
-  }
-  // 追加: 対立する見方
-  if (a.opposing_views) {
-    html += `<div class="gap-box"><span class="gap-label">⚖️ 対立する見方</span>${escapeHtml(a.opposing_views)}</div>`;
-  }
   modalContent.innerHTML = html;
   modal.classList.add('open');
   modal.scrollTop = 0;
