@@ -38,9 +38,9 @@ body{
 .masthead-logo{height:120px;width:auto;display:block;margin:0 auto;filter:sepia(40%) saturate(80%)}
 .masthead-bottom{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;max-width:1200px;margin:-2px auto 0;padding:0 20px;border-bottom:none;line-height:2.4}
 .filters{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:16px 20px;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);background:#ffffff;font-family:'Noto Sans JP',sans-serif}
-.filter-btn{background:transparent;border:1px solid var(--rule);padding:6px 14px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--ink);height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
-.filter-btn:hover{background:var(--ink);color:var(--paper)}
-.filter-btn.active{background:var(--ink);color:var(--paper);font-weight:700}
+.filter-btn{background:transparent;border:1px solid var(--rule);padding:6px 14px;font-size:14px;cursor:pointer;transition:all .2s;color:var(--ink);height:36px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;filter:grayscale(1)}
+.filter-btn:hover{background:var(--ink);color:var(--paper);filter:none}
+.filter-btn.active{background:var(--ink);color:var(--paper);font-weight:700;filter:none}
 .filter-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .filter-label{font-size:12px;color:var(--muted);margin-right:4px;white-space:nowrap}
 .newspaper{max-width:1200px;margin:0 auto;padding:24px 20px}
@@ -53,8 +53,8 @@ body{
 .articles-grid .article:nth-child(2n){border-right:none}
 .article .headline{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px;white-space:pre-line}
 .article .summary{font-size:16px;line-height:1.9;margin-bottom:12px}
-.tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted)}
-.tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent)}
+.tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted);filter:grayscale(1)}
+.tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent);filter:grayscale(1)}
 .japan-impact{background:rgba(139,0,0,.04);border-left:3px solid var(--accent);padding:10px 14px;margin-top:12px;font-size:15px}
 .shift-box{background:rgba(139,0,0,.05);border-left:3px solid var(--accent);padding:8px 14px;margin-bottom:12px;font-size:15px;font-weight:700;font-family:'Noto Sans JP',sans-serif;color:var(--accent)}
 .japan-impact::before{content:'🇯🇵 日本への影響';display:block;font-weight:700;font-size:13px;color:var(--accent);margin-bottom:4px;font-family:'Noto Sans JP',sans-serif}
@@ -177,6 +177,7 @@ body{
     <button class="filter-btn" data-filter="funding">💰 Funding</button>
     <button class="filter-btn" data-filter="oss">🧠 OSS</button>
     <button class="filter-btn" data-filter="research">🔬 Research</button>
+    <button class="filter-btn" data-filter="robotics">🤖 ロボット</button>
   </div>
 </nav>
 
@@ -185,7 +186,7 @@ body{
 </main>
 
 <footer class="footer">
-  外報電抄 ─ 海外テック業界の変化を構造化して届ける<br>
+  外報電抄 ─ 海外テック業界の変化を観測、要約して届ける<br>
   更新: 毎朝 5:00 JST ─ Powered by Claude API + RSS
 </footer>
 
@@ -198,7 +199,7 @@ body{
 
 <script>
 const API_BASE = 'https://silent-lab-5ed5.number0190.workers.dev';
-const TAG_LABELS = { bigtech:'🚨 Big Tech', ai:'⚡ AI', semiconductor:'🏭 半導体', china:'🇨🇳 中国', funding:'💰 Funding', oss:'🧠 OSS', research:'🔬 Research' };
+const TAG_LABELS = { bigtech:'🚨 Big Tech', ai:'⚡ AI', semiconductor:'🏭 半導体', china:'🇨🇳 中国', funding:'💰 Funding', oss:'🧠 OSS', research:'🔬 Research', robotics:'🤖 ロボット' };
 
 let articlesData = [];
 let currentIndex = 0;
@@ -356,13 +357,7 @@ document.addEventListener('keydown', e => {
 });
 
 function setupArticleClicks() {
-  document.querySelectorAll('[data-idx]').forEach(el => {
-    el.style.cursor = 'pointer';
-    el.addEventListener('click', e => {
-      if (e.target.closest('.source-link')) return;
-      showModal(parseInt(el.dataset.idx));
-    });
-  });
+  // モーダル廃止: 記事は全文表示のまま。テキスト選択可能。
 }
 
 // API呼び出し
