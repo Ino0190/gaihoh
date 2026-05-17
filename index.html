@@ -244,9 +244,9 @@ function renderArticle(article, isLead) {
     html += `<div class="summary">${escapeHtml(summary)}</div>`;
   }
 
-  // Signal解説
+  // Signal（業界の変化方向）
   if (article.signal) {
-    html += `<div class="japan-impact" style="border-left-color:#d69e2e;background:rgba(214,158,46,.04)"><div style="font-weight:700;font-size:13px;color:#d69e2e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">💡 Signal</div>${escapeHtml(article.signal)}</div>`;
+    html += `<div class="japan-impact" style="border-left-color:#d69e2e;background:rgba(214,158,46,.04)"><div style="font-weight:700;font-size:13px;color:#d69e2e;margin-bottom:4px;font-family:'Noto Sans JP',sans-serif">📡 Signal</div>${escapeHtml(article.signal)}</div>`;
   }
 
   // 日本への影響
@@ -255,8 +255,9 @@ function renderArticle(article, isLead) {
   }
 
   // 原文リンク
-  if (article.source_url && article.source_name) {
-    html += `<a href="${escapeHtml(article.source_url)}" class="source-link" target="_blank" rel="noopener">原文: ${escapeHtml(article.source_name)}</a>`;
+  if (article.source_url) {
+    const name = article.source_name || new URL(article.source_url).hostname.replace('www.','');
+    html += `<a href="${escapeHtml(article.source_url)}" class="source-link" target="_blank" rel="noopener">原文: ${escapeHtml(name)}</a>`;
   }
 
   return html;
