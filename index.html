@@ -57,6 +57,7 @@ body{
 .article{padding:20px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .articles-grid .article:nth-child(2n){border-right:none}
 .article .headline{font-size:24px;font-weight:700;line-height:1.5;margin-bottom:8px;white-space:pre-line}
+.headline-sub{font-size:0.65em;font-weight:400;color:var(--muted)}
 .article .summary{font-size:16px;line-height:1.9;margin-bottom:12px}
 .tag{display:inline-block;font-family:'Noto Sans JP',sans-serif;font-size:12px;padding:2px 8px;margin-right:6px;margin-bottom:4px;border:1px solid var(--rule);color:var(--muted);filter:grayscale(1)}
 .tag.region{background:rgba(139,0,0,.08);border-color:var(--accent);color:var(--accent);filter:grayscale(1)}
@@ -217,9 +218,26 @@ body{
   <div class="column-inner">
     <img src="外報電抄logo002.svg" alt="" style="height:80px;width:80px;flex-shrink:0;filter:sepia(40%) saturate(80%)">
     <div>
-      <div class="column-header">✍️ 編集部コラム ─ <span id="columnAuthor">黒田</span></div>
+      <div class="column-header">編集部コラム ─ <span id="columnAuthor">黒田</span></div>
       <div class="column-text" id="columnText">予測市場をAIで監視するという話を読んで、正直ぞっとした。人間が作った市場を、人間が監視できなくなったからAIに任せる。これは「進歩」なのか。エンジンの回転数は人間の耳でわかる。だが金融市場の異常は、もはや人間の感覚では捉えられない。我々は自分たちが作ったものに、自分たちが追いつけなくなっている。</div>
     </div>
+  </div>
+</div>
+
+<div class="admin-panel" id="adminPanel" style="display:none">
+  <div style="max-width:1200px;margin:0 auto;padding:16px 20px;border-top:1px solid var(--rule);font-family:'Noto Sans JP',sans-serif">
+    <details>
+      <summary style="cursor:pointer;font-size:14px;color:var(--muted)">📌 編集長ピック</summary>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="pinUrl" type="url" placeholder="記事URLを貼り付け" style="flex:1;min-width:300px;padding:8px 12px;border:1px solid var(--rule);font-size:14px">
+        <select id="pinCh" style="padding:8px 12px;border:1px solid var(--rule);font-size:14px">
+          <option value="tech">テック</option>
+          <option value="sustain">サステナ</option>
+        </select>
+        <button id="pinSubmit" style="padding:8px 16px;background:var(--ink);color:var(--paper);border:none;font-size:14px;cursor:pointer">ピン登録</button>
+        <span id="pinStatus" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+    </details>
   </div>
 </div>
 
@@ -271,7 +289,15 @@ function renderArticle(article, isLead) {
   </div>`;
 
   const hTag = isLead ? 'h2' : 'h3';
-  html += `<${hTag} class="headline">${escapeHtml(headline)}</${hTag}>`;
+  // 主題と副題を分離（\nで区切り、─は除去）
+  const headlineParts = headline.split('\n');
+  if (headlineParts.length > 1) {
+    const main = headlineParts[0].trim();
+    const sub = headlineParts.slice(1).map(s => s.replace(/^─\s*/, '').trim()).filter(s => s).join(' ');
+    html += `<${hTag} class="headline">${escapeHtml(main)}${sub ? '<br><span class="headline-sub">' + escapeHtml(sub) + '</span>' : ''}</${hTag}>`;
+  } else {
+    html += `<${hTag} class="headline">${escapeHtml(headline)}</${hTag}>`;
+  }
 
   // Signal（変化の方向性）
   if (article.shift) {
@@ -584,6 +610,24 @@ document.querySelectorAll('.channel-tab').forEach(tab => {
     currentDate = null; // チャンネル切替時は最新号に戻す
     loadArticles();
   });
+});
+
+// Admin panel（?admin=1 で表示）
+if (new URLSearchParams(location.search).has('admin')) {
+  document.getElementById('adminPanel').style.display = '';
+}
+document.getElementById('pinSubmit')?.addEventListener('click', async () => {
+  const url = document.getElementById('pinUrl').value.trim();
+  const ch = document.getElementById('pinCh').value;
+  const status = document.getElementById('pinStatus');
+  if (!url) { status.textContent = 'URLを入力してください'; return; }
+  status.textContent = '処理中...';
+  try {
+    const res = await fetch(`${API_BASE}/api/pin?url=${encodeURIComponent(url)}&ch=${ch}`);
+    const data = await res.json();
+    if (data.error) { status.textContent = '❌ ' + data.error; }
+    else { status.textContent = '✅ ピン登録完了: ' + (data.article?.headline || '').slice(0, 30); document.getElementById('pinUrl').value = ''; }
+  } catch (e) { status.textContent = '❌ ' + e.message; }
 });
 
 // ハッシュがあればその記事までスクロール
