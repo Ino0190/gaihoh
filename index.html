@@ -54,6 +54,8 @@ body{
 .lead-article .headline{font-size:42px;font-weight:900;line-height:1.2;margin-bottom:12px;white-space:pre-line}
 .lead-article .meta{display:flex;gap:12px;margin-bottom:12px;font-family:'Noto Sans JP',sans-serif}
 .lead-article .summary{font-size:18px;line-height:2;columns:2;column-gap:32px;column-rule:1px solid var(--rule)}
+.lead-image-link{display:block;margin-bottom:16px}
+.lead-image{width:100%;max-height:400px;object-fit:cover;display:block}
 .articles-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .article{padding:20px 16px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
 .articles-grid .article:nth-child(2n){border-right:none}
@@ -257,7 +259,7 @@ body{
 
 <script>
 const API_BASE = 'https://silent-lab-5ed5.number0190.workers.dev';
-const TAG_LABELS = { bigtech:'🚨 Big Tech', ai:'⚡ AI', semiconductor:'🏭 半導体', china:'🇨🇳 中国', funding:'💰 Funding', oss:'🧠 OSS', research:'🔬 Research', robotics:'🤖 ロボット' };
+const TAG_LABELS = { bigtech:'🚨 Big Tech', ai:'⚡ AI', semiconductor:'🏭 半導体', china:'🇨🇳 中国', funding:'💰 Funding', oss:'🧠 OSS', research:'🔬 Research', robotics:'🤖 ロボット', sportstech:'⚽ スポーツテック' };
 
 let articlesData = [];
 let currentIndex = 0;
@@ -304,6 +306,11 @@ function renderArticle(article, isLead) {
   // Signal（変化の方向性）
   if (article.shift) {
     html += `<div class="shift-box">${escapeHtml(article.shift)}</div>`;
+  }
+
+  // 一面記事の画像（image_urlがある場合のみ）
+  if (isLead && article.image_url) {
+    html += `<a href="${escapeHtml(article.source_url || '#')}" target="_blank" rel="noopener" class="lead-image-link"><img src="${escapeHtml(article.image_url)}" alt="" class="lead-image" loading="lazy"></a>`;
   }
 
   // 要約
