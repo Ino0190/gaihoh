@@ -29,6 +29,9 @@ body{
 .masthead-top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto 0;padding:0 20px}
 .masthead-subtitle{font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
 .masthead-date{font-size:18px;font-weight:700;color:var(--ink);font-family:'Noto Serif JP','Yu Mincho','游明朝',serif}
+.date-nav{display:flex;align-items:center;gap:8px}
+.date-nav-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px 8px;font-family:serif;transition:color .2s}
+.date-nav-btn:hover{color:var(--ink)}
 .masthead-hero{display:flex;align-items:center;justify-content:center;gap:16px}
 .ticker-cards{display:flex;gap:20px;align-items:center}
 .ticker-card{width:110px;height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'Noto Sans JP',sans-serif;background:transparent;position:relative;top:5px}
@@ -45,7 +48,7 @@ body{
 .filter-btn.active{background:var(--ink);color:var(--paper);font-weight:700;filter:none}
 .filter-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .filter-label{font-size:12px;color:var(--muted);margin-right:4px;white-space:nowrap}
-.newspaper{max-width:1200px;margin:0 auto;padding:24px 20px}
+.newspaper{max-width:1200px;margin:0 auto;padding:24px 20px;background:#faf8f4}
 .lead-article{border-bottom:2px solid var(--ink);padding-bottom:24px;margin-bottom:24px}
 .lead-article .headline{font-size:42px;font-weight:900;line-height:1.4;margin-bottom:12px;white-space:pre-line}
 .lead-article .meta{display:flex;gap:12px;margin-bottom:12px;font-family:'Noto Sans JP',sans-serif}
@@ -99,7 +102,7 @@ body{
 .channel-tab{background:transparent;border:none;border-bottom:3px solid transparent;padding:8px 24px;font-size:15px;cursor:pointer;color:var(--muted);font-weight:700;transition:all .2s}
 .channel-tab:hover{color:var(--ink)}
 .channel-tab.active{color:var(--ink);border-bottom-color:var(--accent)}
-.column-inner{border:1px solid var(--rule);padding:20px;margin-top:16px;display:flex;gap:16px;align-items:flex-start}
+.column-inner{padding:20px 0;margin-top:16px;display:flex;gap:16px;align-items:flex-start}
 .column-header{font-size:14px;font-weight:700;color:var(--ink);font-family:'Noto Sans JP',sans-serif;margin-bottom:8px}
 .column-text{font-size:16px;line-height:2;color:var(--ink)}
 .loading{text-align:center;padding:60px 20px;font-size:18px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
@@ -150,8 +153,12 @@ body{
 
 <header class="masthead">
   <div class="masthead-top">
-    <span class="masthead-subtitle">海外テック業界の変化を毎朝厳選５記事で読む</span>
-    <span class="masthead-date" id="edition-date">読み込み中...</span>
+    <span class="masthead-subtitle">各分野の変化を毎朝厳選５記事で読む</span>
+    <div class="date-nav">
+      <button id="datePrev" class="date-nav-btn" title="前日">←</button>
+      <span class="masthead-date" id="edition-date">読み込み中...</span>
+      <button id="dateNext" class="date-nav-btn" title="次日">→</button>
+    </div>
   </div>
   <div class="masthead-hero">
     <div class="ticker-cards">
@@ -243,7 +250,12 @@ function formatEditionDate(isoDate, edition) {
   const m = d.getMonth() + 1;
   const day = d.getDate();
   const dow = days[d.getDay()];
-  return `${y}年${m}月${day}日（${dow}）`;
+  const dateStr = `${y}年${m}月${day}日（${dow}）`;
+  const today = getTodayJST();
+  if (!currentDate || currentDate === today) {
+    return dateStr + ' 最新号';
+  }
+  return dateStr;
 }
 
 // 記事HTMLを生成
@@ -444,17 +456,79 @@ function shareArticle(btn) {
 
 // API呼び出し
 let currentChannel = 'tech';
+let currentDate = null; // null = latest（今日）
+
+function getTodayJST() {
+  const now = new Date();
+  const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  return jst.toISOString().slice(0, 10);
+}
+
+function shiftDate(dateStr, days) {
+  const d = new Date(dateStr + 'T00:00:00Z');
+  d.setUTCDate(d.getUTCDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function updateDateNav() {
+  const nextBtn = document.getElementById('dateNext');
+  const prevBtn = document.getElementById('datePrev');
+  const today = getTodayJST();
+  if (!currentDate || currentDate === today) {
+    nextBtn.style.visibility = 'hidden';
+    prevBtn.style.visibility = 'visible';
+  } else {
+    nextBtn.style.visibility = currentDate < today ? 'visible' : 'hidden';
+    prevBtn.style.visibility = 'visible';
+  }
+}
 
 async function loadArticles() {
+  const container = document.getElementById('newspaper');
+  container.innerHTML = '<div class="loading"><span class="loading-spinner"></span>記事を読み込んでいます...</div>';
   try {
-    const res = await fetch(`${API_BASE}/api/latest?ch=${currentChannel}`);
+    let url;
+    if (currentDate && currentDate !== getTodayJST()) {
+      url = `${API_BASE}/api/archive?date=${currentDate}&ch=${currentChannel}`;
+    } else {
+      url = `${API_BASE}/api/latest?ch=${currentChannel}`;
+    }
+    const res = await fetch(url);
+    if (res.status === 404) {
+      container.innerHTML = '<div class="error-msg">この日の記事はありません。</div>';
+      // 過去号の日付を手動表示
+      if (currentDate) {
+        const d = new Date(currentDate + 'T00:00:00+09:00');
+        const days = ['日','月','火','水','木','金','土'];
+        document.getElementById('edition-date').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+      }
+      updateDateNav();
+      return;
+    }
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     renderNewspaper(data);
   } catch (e) {
-    document.getElementById('newspaper').innerHTML = `<div class="error-msg">記事の読み込みに失敗しました: ${escapeHtml(e.message)}<br><br><button onclick="loadArticles()" style="padding:8px 16px;cursor:pointer">再試行</button></div>`;
+    container.innerHTML = `<div class="error-msg">記事の読み込みに失敗しました: ${escapeHtml(e.message)}<br><br><button onclick="loadArticles()" style="padding:8px 16px;cursor:pointer">再試行</button></div>`;
   }
+  updateDateNav();
 }
+
+document.getElementById('datePrev').addEventListener('click', () => {
+  if (!currentDate) currentDate = getTodayJST();
+  currentDate = shiftDate(currentDate, -1);
+  loadArticles();
+});
+document.getElementById('dateNext').addEventListener('click', () => {
+  if (!currentDate) return;
+  const next = shiftDate(currentDate, 1);
+  if (next >= getTodayJST()) {
+    currentDate = null;
+  } else {
+    currentDate = next;
+  }
+  loadArticles();
+});
 
 async function loadTickers() {
   try {
@@ -486,6 +560,7 @@ async function loadTickers() {
 
 loadArticles();
 loadTickers();
+updateDateNav();
 
 // チャンネルタブ切り替え
 document.querySelectorAll('.channel-tab').forEach(tab => {
@@ -493,6 +568,7 @@ document.querySelectorAll('.channel-tab').forEach(tab => {
     document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     currentChannel = tab.dataset.ch;
+    currentDate = null; // チャンネル切替時は最新号に戻す
     loadArticles();
   });
 });
