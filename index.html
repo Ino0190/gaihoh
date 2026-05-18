@@ -244,12 +244,14 @@ let currentIndex = 0;
 
 // 日付フォーマット
 function formatEditionDate(isoDate, edition) {
-  const d = new Date(isoDate);
+  // JSTで日付を計算
+  const utc = new Date(isoDate);
+  const jst = new Date(utc.getTime() + 9 * 60 * 60 * 1000);
   const days = ['日','月','火','水','木','金','土'];
-  const y = d.getFullYear();
-  const m = d.getMonth() + 1;
-  const day = d.getDate();
-  const dow = days[d.getDay()];
+  const y = jst.getUTCFullYear();
+  const m = jst.getUTCMonth() + 1;
+  const day = jst.getUTCDate();
+  const dow = days[jst.getUTCDay()];
   const dateStr = `${y}年${m}月${day}日（${dow}）`;
   const today = getTodayJST();
   if (!currentDate || currentDate === today) {
@@ -333,8 +335,16 @@ function renderNewspaper(data) {
 
   articlesData = data.articles;
 
-  // 日付表示
-  document.getElementById('edition-date').textContent = formatEditionDate(data.date, data.edition);
+  // 日付表示（currentDateの状態に基づく）
+  const today = getTodayJST();
+  if (!currentDate || currentDate === today) {
+    document.getElementById('edition-date').textContent = formatEditionDate(data.date, data.edition);
+  } else {
+    // 過去号: currentDateから日付を生成
+    const d = new Date(currentDate + 'T00:00:00+09:00');
+    const days = ['日','月','火','水','木','金','土'];
+    document.getElementById('edition-date').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
+  }
 
   // コラム表示
   if (data.column && data.column.text) {
