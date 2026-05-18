@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
+html{overflow-y:scroll}
 :root{
   --ink:#1a1a1a;
   --paper:#f5f0e8;
@@ -27,8 +28,8 @@ body{
 .masthead{text-align:center;padding:12px 20px 12px;border-bottom:1px solid var(--rule)}
 .masthead h1{margin-bottom:0;padding:0;line-height:1}
 .masthead-top{display:flex;justify-content:space-between;align-items:center;max-width:1200px;margin:0 auto 0;padding:0 20px}
-.masthead-subtitle{font-size:13px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
-.masthead-date{font-size:18px;font-weight:700;color:var(--ink);font-family:'Noto Serif JP','Yu Mincho','游明朝',serif}
+.masthead-subtitle{font-size:15px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
+.masthead-date{font-size:15px;font-weight:700;color:var(--ink);font-family:'Noto Serif JP','Yu Mincho','游明朝',serif}
 .date-nav{display:flex;align-items:center;gap:8px}
 .date-nav-btn{background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);padding:4px 8px;font-family:serif;transition:color .2s}
 .date-nav-btn:hover{color:var(--ink)}
@@ -100,7 +101,7 @@ body{
 .footer{text-align:center;padding:24px 20px;border-top:3px double var(--ink);font-size:14px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
 .column-box{max-width:1200px;margin:0 auto;padding:0 20px 24px}
 .channel-tabs{display:flex;justify-content:center;gap:0;padding:12px 20px;border-bottom:1px solid var(--rule);font-family:'Noto Sans JP',sans-serif}
-.channel-tab{background:transparent;border:none;border-bottom:3px solid transparent;padding:8px 24px;font-size:15px;cursor:pointer;color:var(--muted);font-weight:700;transition:all .2s}
+.channel-tab{background:transparent;border:none;border-bottom:3px solid transparent;padding:8px 24px;font-size:15px;cursor:pointer;color:var(--muted);font-weight:700;transition:all .2s;min-width:120px;text-align:center}
 .channel-tab:hover{color:var(--ink)}
 .channel-tab.active{color:var(--ink);border-bottom-color:var(--accent)}
 .column-inner{padding:20px 0;margin-top:16px;display:flex;gap:16px;align-items:flex-start}
@@ -154,7 +155,7 @@ body{
 
 <header class="masthead">
   <div class="masthead-top">
-    <span class="masthead-subtitle">各分野の変化を毎朝厳選５記事で読む</span>
+    <span class="masthead-subtitle">各分野の変化を毎朝５時配信の厳選５記事で読む</span>
     <div class="date-nav">
       <button id="datePrev" class="date-nav-btn" title="前日">←</button>
       <span class="masthead-date" id="edition-date">読み込み中...</span>
@@ -192,8 +193,8 @@ body{
 
 <div class="channel-tabs">
   <button class="channel-tab active" data-ch="tech">テック</button>
-  <button class="channel-tab" data-ch="sustain">サステナビリティ</button>
   <button class="channel-tab" data-ch="uiux">UI/UX</button>
+  <button class="channel-tab" data-ch="sustain">サステナビリティ</button>
 </div>
 
 <nav class="filters" style="display:none">
@@ -357,6 +358,7 @@ function renderNewspaper(data) {
   const container = document.getElementById('newspaper');
   if (!data.articles || data.articles.length === 0) {
     container.innerHTML = '<div class="error-msg">今日はこの分野の記事はありません。</div>';
+    document.getElementById('columnBox').style.display = 'none';
     return;
   }
 
