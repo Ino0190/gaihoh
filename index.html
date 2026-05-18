@@ -443,6 +443,8 @@ function shareArticle(btn) {
 }
 
 // API呼び出し
+let currentChannel = 'tech';
+
 async function loadArticles() {
   try {
     const res = await fetch(`${API_BASE}/api/latest?ch=${currentChannel}`);
@@ -486,7 +488,6 @@ loadArticles();
 loadTickers();
 
 // チャンネルタブ切り替え
-let currentChannel = 'tech';
 document.querySelectorAll('.channel-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
