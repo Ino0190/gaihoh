@@ -351,6 +351,8 @@ function renderNewspaper(data) {
     document.getElementById('columnAuthor').textContent = data.column.author;
     document.getElementById('columnText').textContent = data.column.text;
     document.getElementById('columnBox').style.display = '';
+  } else {
+    document.getElementById('columnBox').style.display = 'none';
   }
 
   let html = '';
@@ -506,6 +508,7 @@ async function loadArticles() {
     const res = await fetch(url);
     if (res.status === 404) {
       container.innerHTML = '<div class="error-msg">この日の記事はありません。</div>';
+      document.getElementById('columnBox').style.display = 'none';
       // 過去号の日付を手動表示
       if (currentDate) {
         const d = new Date(currentDate + 'T00:00:00+09:00');
