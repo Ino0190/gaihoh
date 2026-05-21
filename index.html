@@ -317,7 +317,10 @@ function renderArticle(article, isLead) {
   const summary = article.summary || '';
   if (isLead) {
     html += `<div class="summary"><p>${escapeHtml(summary)}</p>`;
-    if (article.background) html += `<p>${escapeHtml(article.background)}</p>`;
+    if (article.background) {
+      const bg = Array.isArray(article.background) ? article.background.join(' → ') : article.background;
+      html += `<p>${escapeHtml(bg)}</p>`;
+    }
     html += `</div>`;
   } else {
     html += `<div class="summary">${escapeHtml(summary)}</div>`;
@@ -357,7 +360,8 @@ function renderArticle(article, isLead) {
 
 function escapeHtml(str) {
   if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  if (Array.isArray(str)) str = str.join('\n');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // メイン描画
