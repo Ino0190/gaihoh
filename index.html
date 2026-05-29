@@ -245,6 +245,12 @@ body{
   </div>
 </div>
 
+<div class="channel-tabs">
+  <button class="channel-tab" data-ch="tech">テック</button>
+  <button class="channel-tab" data-ch="uiux">UI/UX</button>
+  <button class="channel-tab" data-ch="sustain">サステナビリティ</button>
+</div>
+
 <footer class="footer">
   外報電抄 ─ 海外テック業界の変化を観測、要約して届ける<br>
   更新: 毎朝 5:00 JST ─ Powered by Claude API + RSS
@@ -619,10 +625,12 @@ updateDateNav();
 document.querySelectorAll('.channel-tab').forEach(tab => {
   tab.addEventListener('click', () => {
     document.querySelectorAll('.channel-tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    currentChannel = tab.dataset.ch;
+    const ch = tab.dataset.ch;
+    document.querySelectorAll(`.channel-tab[data-ch="${ch}"]`).forEach(t => t.classList.add('active'));
+    currentChannel = ch;
     currentDate = null; // チャンネル切替時は最新号に戻す
     loadArticles();
+    document.getElementById('newspaper').scrollIntoView({behavior:'smooth'});
   });
 });
 
