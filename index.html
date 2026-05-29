@@ -109,6 +109,11 @@ body{
 .column-inner{padding:20px 0;margin-top:16px;display:flex;gap:16px;align-items:flex-start}
 .column-header{font-size:14px;font-weight:700;color:var(--ink);font-family:'Noto Sans JP',sans-serif;margin-bottom:8px}
 .column-text{font-size:16px;line-height:2;color:var(--ink)}
+.roundtable{margin-top:4px}
+.rt-turn{display:flex;gap:10px;padding:8px 0;border-bottom:1px dotted var(--rule);align-items:baseline}
+.rt-turn:last-child{border-bottom:none}
+.rt-speaker{flex-shrink:0;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:15px;min-width:56px;white-space:nowrap}
+.rt-text{font-size:16px;line-height:1.9;color:var(--ink)}
 .loading{text-align:center;padding:60px 20px;font-size:18px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
 .loading-spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-right:12px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -221,10 +226,7 @@ body{
 <div class="column-box" id="columnBox">
   <div class="column-inner">
     <img src="外報電抄logo002.svg" alt="" style="height:80px;width:80px;flex-shrink:0;filter:sepia(40%) saturate(80%)">
-    <div>
-      <div class="column-header">編集部コラム ─ <span id="columnAuthor">黒田</span></div>
-      <div class="column-text" id="columnText">予測市場をAIで監視するという話を読んで、正直ぞっとした。人間が作った市場を、人間が監視できなくなったからAIに任せる。これは「進歩」なのか。エンジンの回転数は人間の耳でわかる。だが金融市場の異常は、もはや人間の感覚では捉えられない。我々は自分たちが作ったものに、自分たちが追いつけなくなっている。</div>
-    </div>
+    <div style="flex:1" id="columnBody"></div>
   </div>
 </div>
 
@@ -370,6 +372,25 @@ function escapeHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// 編集部コラム描画（座談会形式 / 旧単独コラム形式）
+const SPEAKER_COLORS = { '黒田':'#8b0000', '朝比奈':'#1d4e89', '南':'#5b6b2b' };
+function renderColumn(column) {
+  if (column.turns && column.turns.length) {
+    const names = [...new Set(column.turns.map(t => t.speaker))].join('・');
+    let html = `<div class="column-header">編集会議 ─ ${escapeHtml(names)}が今朝の一面を語る</div>`;
+    html += '<div class="roundtable">';
+    for (const t of column.turns) {
+      const color = SPEAKER_COLORS[t.speaker] || 'var(--muted)';
+      html += `<div class="rt-turn"><span class="rt-speaker" style="color:${color}">${escapeHtml(t.speaker)}</span><span class="rt-text">${escapeHtml(t.text)}</span></div>`;
+    }
+    html += '</div>';
+    return html;
+  }
+  // 旧単独コラム
+  return `<div class="column-header">編集部コラム ─ ${escapeHtml(column.author || '')}</div>`
+    + `<div class="column-text">${escapeHtml(column.text || '')}</div>`;
+}
+
 // メイン描画
 function renderNewspaper(data) {
   const container = document.getElementById('newspaper');
@@ -392,10 +413,10 @@ function renderNewspaper(data) {
     document.getElementById('edition-date').textContent = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${days[d.getDay()]}）`;
   }
 
-  // コラム表示
-  if (data.column && data.column.text) {
-    document.getElementById('columnAuthor').textContent = data.column.author;
-    document.getElementById('columnText').textContent = data.column.text;
+  // コラム表示（座談会 roundtable / 旧単独コラム の両対応）
+  const columnBody = document.getElementById('columnBody');
+  if (data.column && ((data.column.turns && data.column.turns.length) || data.column.text)) {
+    columnBody.innerHTML = renderColumn(data.column);
     document.getElementById('columnBox').style.display = '';
   } else {
     document.getElementById('columnBox').style.display = 'none';
