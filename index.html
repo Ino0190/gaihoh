@@ -114,6 +114,9 @@ body{
 .rt-turn:last-child{border-bottom:none}
 .rt-speaker{flex-shrink:0;font-family:'Noto Sans JP',sans-serif;font-weight:700;font-size:15px;min-width:56px;white-space:nowrap}
 .rt-text{font-size:16px;line-height:1.9;color:var(--ink)}
+.column-pickup{display:inline-block;margin-top:12px;font-size:14px;color:var(--muted);font-family:'Noto Sans JP',sans-serif;text-decoration:none;border-bottom:1px dotted var(--muted);line-height:1.6}
+.column-pickup:hover{color:var(--accent);border-color:var(--accent)}
+.column-pickup-src{font-size:12px}
 .loading{text-align:center;padding:60px 20px;font-size:18px;color:var(--muted);font-family:'Noto Sans JP',sans-serif}
 .loading-spinner{display:inline-block;width:24px;height:24px;border:3px solid var(--rule);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite;margin-right:12px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -384,6 +387,10 @@ function renderColumn(column) {
       html += `<div class="rt-turn"><span class="rt-speaker" style="color:${color}">${escapeHtml(t.speaker)}</span><span class="rt-text">${escapeHtml(t.text)}</span></div>`;
     }
     html += '</div>';
+    if (column.pickup && column.pickup.url) {
+      const name = column.pickup.source_name || (() => { try { return new URL(column.pickup.url).hostname.replace('www.',''); } catch(e) { return 'リンク'; } })();
+      html += `<a href="${escapeHtml(column.pickup.url)}" class="column-pickup" target="_blank" rel="noopener">📎 話に出た記事: ${escapeHtml(column.pickup.title)}<span class="column-pickup-src">（${escapeHtml(name)}）</span></a>`;
+    }
     return html;
   }
   // 旧単独コラム
